@@ -33,6 +33,9 @@ class DemoActivity : AppCompatActivity() {
                         commit {
                             setReorderingAllowed(true)
                             add<CurrencyListFragment>(R.id.fragment_container)
+                            runOnCommit {
+                                btn1.isEnabled = false
+                            }
                         }
                     }
                 }
@@ -40,6 +43,7 @@ class DemoActivity : AppCompatActivity() {
 
             btn2.setOnClickListener {
                 // Sort data
+                currencyViewModel.toggleSort()
             }
         }
     }
