@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CDCDemo</string>
+    <string name="load">Load</string>
+    <string name="sort">Sort</string>
 </resources>
