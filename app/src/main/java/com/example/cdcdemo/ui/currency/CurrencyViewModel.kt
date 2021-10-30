@@ -6,10 +6,7 @@ import com.example.cdcdemo.data.CurrencyDao
 import com.example.cdcdemo.data.CurrencyInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,9 +18,15 @@ class CurrencyViewModel @Inject constructor(private val currencyDao: CurrencyDao
     private val _currencyList = MutableStateFlow<List<CurrencyInfo>>(emptyList())
     val currencyList: StateFlow<List<CurrencyInfo>> = _currencyList
 
+    private val _itemClick = MutableSharedFlow<CurrencyInfo>()
+    val itemClick: SharedFlow<CurrencyInfo> = _itemClick
+
     init {
         viewModelScope.launch {
             currencyDao.getAll()
+                .map {
+                    it.sortWithMode(sortingMode)
+                }
                 .flowOn(Dispatchers.IO)
                 .collect {
                     _currencyList.value = it
@@ -40,15 +43,30 @@ class CurrencyViewModel @Inject constructor(private val currencyDao: CurrencyDao
             SortingMode.NAME_DESC -> SortingMode.NAME_ASC
         }
 
-        val tempList = currencyList.value.toMutableList()
-        val newList = when (sortingMode) {
-            SortingMode.NAME_ASC -> tempList.sortedBy { it.name }
-            SortingMode.NAME_DESC -> tempList.sortedByDescending { it.name }
-            null -> tempList
-        }
+        val newList = currencyList.value.sortWithMode(sortingMode)
 
         _currencyList.value = newList
         isSorting = false
+    }
+
+    fun itemClick(currencyInfo: CurrencyInfo) {
+        viewModelScope.launch {
+            _itemClick.emit(currencyInfo)
+        }
+    }
+
+    private fun List<CurrencyInfo>.sortWithMode(sortingMode: SortingMode?): List<CurrencyInfo> {
+        return if (sortingMode == null) {
+            this
+        } else {
+            toMutableList()
+                .let { list ->
+                    when (sortingMode) {
+                        SortingMode.NAME_ASC -> list.sortedBy { it.name }
+                        SortingMode.NAME_DESC -> list.sortedByDescending { it.name }
+                    }
+                }
+        }
     }
 
     enum class SortingMode {

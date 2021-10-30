@@ -9,15 +9,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cdcdemo.R
+import com.example.cdcdemo.data.CurrencyInfo
 import com.example.cdcdemo.databinding.FragmentCurrencyBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CurrencyListFragment: Fragment(R.layout.fragment_currency) {
+class CurrencyListFragment: Fragment(R.layout.fragment_currency),
+    CurrencyAdapter.ItemClickListener {
     private val currencyViewModel: CurrencyViewModel by activityViewModels()
-    private val currencyAdapter = CurrencyAdapter()
+    private val currencyAdapter = CurrencyAdapter(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,4 +43,7 @@ class CurrencyListFragment: Fragment(R.layout.fragment_currency) {
         }
     }
 
+    override fun onItemClick(currencyInfo: CurrencyInfo) {
+        currencyViewModel.itemClick(currencyInfo)
+    }
 }

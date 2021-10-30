@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.cdcdemo.data.CurrencyInfo
 import com.example.cdcdemo.databinding.ItemCurrencyBinding
 
-class CurrencyAdapter : ListAdapter<CurrencyInfo, CurrencyAdapter.CurrencyViewHodler>(DiffCallback()) {
+class CurrencyAdapter(private val onItemClickListener: ItemClickListener) : ListAdapter<CurrencyInfo, CurrencyAdapter.CurrencyViewHodler>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHodler {
         val binding = ItemCurrencyBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -16,13 +16,14 @@ class CurrencyAdapter : ListAdapter<CurrencyInfo, CurrencyAdapter.CurrencyViewHo
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHodler, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onItemClickListener)
     }
 
 
     class CurrencyViewHodler(private val binding: ItemCurrencyBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(currencyInfo: CurrencyInfo) {
+        fun bind(currencyInfo: CurrencyInfo, onItemClickListener: ItemClickListener) {
             binding.apply {
+                root.setOnClickListener { onItemClickListener.onItemClick(currencyInfo) }
                 name.text = currencyInfo.name
                 symbol.text = currencyInfo.symbol
             }
@@ -36,5 +37,9 @@ class CurrencyAdapter : ListAdapter<CurrencyInfo, CurrencyAdapter.CurrencyViewHo
         override fun areContentsTheSame(oldItem: CurrencyInfo, newItem: CurrencyInfo): Boolean =
             oldItem == newItem
 
+    }
+
+    interface ItemClickListener {
+        fun onItemClick(currencyInfo: CurrencyInfo)
     }
 }

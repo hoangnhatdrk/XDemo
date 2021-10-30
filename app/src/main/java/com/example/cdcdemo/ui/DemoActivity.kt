@@ -1,15 +1,22 @@
 package com.example.cdcdemo.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.cdcdemo.R
+import com.example.cdcdemo.data.CurrencyInfo
 import com.example.cdcdemo.databinding.ActivityMainBinding
 import com.example.cdcdemo.ui.currency.CurrencyListFragment
 import com.example.cdcdemo.ui.currency.CurrencyViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DemoActivity : AppCompatActivity() {
@@ -46,5 +53,19 @@ class DemoActivity : AppCompatActivity() {
                 currencyViewModel.toggleSort()
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                currencyViewModel.itemClick
+                    .collect {
+                        handleItemClick(it)
+                    }
+            }
+        }
+    }
+
+    private fun handleItemClick(it: CurrencyInfo) {
+        Toast.makeText(this@DemoActivity, "Pumping ${it.symbol} ...", Toast.LENGTH_SHORT)
+            .show()
     }
 }
