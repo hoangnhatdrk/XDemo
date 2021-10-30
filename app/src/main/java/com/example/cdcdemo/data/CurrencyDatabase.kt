@@ -1,6 +1,5 @@
 package com.example.cdcdemo.data
 
-import android.content.res.AssetManager
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase

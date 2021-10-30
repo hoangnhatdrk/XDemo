@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cdcdemo.R
 import com.example.cdcdemo.databinding.FragmentCurrencyBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CurrencyListFragment: Fragment(R.layout.fragment_currency) {
