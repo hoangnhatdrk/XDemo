@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.cdcdemo.data.sample.SAMPLE_CURRENCY_LIST
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
@@ -23,7 +24,7 @@ abstract class CurrencyDatabase: RoomDatabase() {
             super.onCreate(db)
             val dao = dbProvider.get().getCurrencyDao()
 
-            coroutineScope.launch {
+            coroutineScope.launch(Dispatchers.IO) {
                 dao.insertAll(
                     SAMPLE_CURRENCY_LIST
                 )
