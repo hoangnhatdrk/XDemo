@@ -4,14 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cdcdemo.data.CurrencyDao
 import com.example.cdcdemo.data.CurrencyInfo
+import com.example.cdcdemo.hilt.IODispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CurrencyViewModel @Inject constructor(private val currencyDao: CurrencyDao) : ViewModel() {
+class CurrencyViewModel @Inject constructor(
+    private val currencyDao: CurrencyDao,
+    @IODispatcher private val ioDispatcher: CoroutineDispatcher
+    ) : ViewModel() {
     private var sortingMode: SortingMode? = null
     private var isSorting = false
 
@@ -27,7 +31,7 @@ class CurrencyViewModel @Inject constructor(private val currencyDao: CurrencyDao
                 .map {
                     it.sortWithMode(sortingMode)
                 }
-                .flowOn(Dispatchers.IO)
+                .flowOn(ioDispatcher)
                 .collect {
                     _currencyList.value = it
                 }

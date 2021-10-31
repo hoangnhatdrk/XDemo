@@ -42,6 +42,7 @@ class DemoActivity : AppCompatActivity() {
                             add<CurrencyListFragment>(R.id.fragment_container)
                             runOnCommit {
                                 btn1.isEnabled = false
+                                btn2.isEnabled = true
                             }
                         }
                     }
@@ -52,6 +53,7 @@ class DemoActivity : AppCompatActivity() {
                 // Sort data
                 currencyViewModel.toggleSort()
             }
+            btn2.isEnabled = false
         }
 
         lifecycleScope.launch {

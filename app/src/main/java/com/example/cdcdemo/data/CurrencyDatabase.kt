@@ -4,6 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.cdcdemo.data.sample.SAMPLE_CURRENCY_LIST
+import com.example.cdcdemo.hilt.IODispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,13 +19,14 @@ abstract class CurrencyDatabase: RoomDatabase() {
 
     class Callback @Inject constructor(
         private val dbProvider: Provider<CurrencyDatabase>,
-        private val coroutineScope: CoroutineScope
+        private val coroutineScope: CoroutineScope,
+        @IODispatcher private val ioDispatcher: CoroutineDispatcher
     ): RoomDatabase.Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
             val dao = dbProvider.get().getCurrencyDao()
 
-            coroutineScope.launch(Dispatchers.IO) {
+            coroutineScope.launch(ioDispatcher) {
                 dao.insertAll(
                     SAMPLE_CURRENCY_LIST
                 )
