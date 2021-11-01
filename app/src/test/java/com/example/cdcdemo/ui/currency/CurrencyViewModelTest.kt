@@ -31,7 +31,7 @@ class CurrencyViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         every { testDao.getAll() } returns flow { emit(SAMPLE_CURRENCY_LIST) }
-        testSubject = CurrencyViewModel(testDao, testDispatcher)
+        testSubject = CurrencyViewModel(testDao, testDispatcher, testDispatcher)
     }
 
     @After
@@ -66,6 +66,18 @@ class CurrencyViewModelTest {
             testSubject.toggleSort()
             assert(awaitItem() == SAMPLE_CURRENCY_LIST.sortedByDescending { it.name })
             testSubject.toggleSort()
+            assert(awaitItem() == SAMPLE_CURRENCY_LIST.sortedBy { it.name })
+        }
+    }
+
+    @Test
+    fun `When call toggleSort while sorting should ignore`() = runBlocking {
+        testSubject.currencyList.test {
+            awaitItem()
+            testDispatcher.pauseDispatcher()
+            testSubject.toggleSort()
+            testSubject.toggleSort()
+            testDispatcher.resumeDispatcher()
             assert(awaitItem() == SAMPLE_CURRENCY_LIST.sortedBy { it.name })
         }
     }

@@ -37,8 +37,16 @@ object AppModule {
     @Provides
     @IODispatcher
     fun provideIODispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+    @Provides
+    @DefaultDispatcher
+    fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
 }
 
 @Retention
 @Qualifier
 annotation class IODispatcher
+
+@Retention
+@Qualifier
+annotation class DefaultDispatcher
