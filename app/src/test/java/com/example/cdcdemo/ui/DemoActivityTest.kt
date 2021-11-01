@@ -36,7 +36,6 @@ import org.robolectric.shadows.ShadowToast
 @RunWith(AndroidJUnit4::class)
 class DemoActivityTest {
     private val testDispatcher = TestCoroutineDispatcher()
-    private val testScope = TestCoroutineScope(testDispatcher)
 
     @get:Rule
     val hiltRule = HiltAndroidRule(this)
@@ -44,8 +43,11 @@ class DemoActivityTest {
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
+    private val fakeViewModelItemClickFlow = MutableSharedFlow<CurrencyInfo>()
     @BindValue
-    val viewModel= mockk<CurrencyViewModel>(relaxed = true)
+    val viewModel= mockk<CurrencyViewModel>(relaxed = true).apply {
+        every { itemClick } returns fakeViewModelItemClickFlow.asSharedFlow()
+    }
 
     @Before
     fun init() {
@@ -107,12 +109,10 @@ class DemoActivityTest {
 
     @Test
     fun `when viewmodel emit item click, show toast message`() = runBlockingTest {
-        val sample = sampleCurrencyInfo(1)
-        val mutableSharedFlow = MutableSharedFlow<CurrencyInfo>()
-        every { viewModel.itemClick } returns mutableSharedFlow.asSharedFlow()
         launch(DemoActivity::class.java)
 
-        mutableSharedFlow.emit(sample)
+        val sample = sampleCurrencyInfo(1)
+        fakeViewModelItemClickFlow.emit(sample)
         assert(ShadowToast.showedToast("Pumping ${sample.symbol} ..."))
     }
 }
