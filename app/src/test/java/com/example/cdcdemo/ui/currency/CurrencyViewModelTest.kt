@@ -37,6 +37,7 @@ class CurrencyViewModelTest {
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test

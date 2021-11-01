@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import app.cash.turbine.test
+import com.example.cdcdemo.sampleCurrencyInfo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
@@ -70,10 +71,4 @@ class CurrencyDBTest {
             assert(newList[2] == sampleCurrencyInfo(3))
         }
     }
-
-    private fun sampleCurrencyInfo(id: Int, name: String? = null, symbol: String? = null) =
-        CurrencyInfo(
-            "SAMPLE$id",
-            name ?: "Sample currency $id",
-            symbol ?: "SAMPLE$id")
 }
